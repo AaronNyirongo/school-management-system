@@ -11,6 +11,14 @@ class Student(models.Model):
     last_name = models.CharField(max_length=100)
     enrollment_number = models.CharField(max_length=30, unique=True)
 
+    classroom = models.ForeignKey(
+        "academics.ClassRoom",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="students",
+    )
+
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
 
