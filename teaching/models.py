@@ -1,20 +1,31 @@
 from django.db import models
 
+
 class TeachingAssignment(models.Model):
     teacher = models.ForeignKey(
         "teachers.Teacher",
         on_delete=models.PROTECT,
         related_name="assignments",
     )
+
     classroom = models.ForeignKey(
         "academics.ClassRoom",
         on_delete=models.PROTECT,
         related_name="teaching_assignments",
     )
+
     subject = models.ForeignKey(
         "subjects.Subject",
         on_delete=models.PROTECT,
         related_name="teaching_assignments",
+    )
+
+    term = models.ForeignKey(
+        "academics.Term",
+        on_delete=models.PROTECT,
+        related_name="teaching_assignments",
+        null=True,
+        blank=True,
     )
 
     is_active = models.BooleanField(default=True)
@@ -23,8 +34,8 @@ class TeachingAssignment(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["teacher", "classroom", "subject"],
-                name="unique_teacher_class_subject",
+                fields=["teacher", "classroom", "subject", "term"],
+                name="unique_teaching_assignment",
             )
         ]
 
