@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ClassRoom(models.Model):
     LEVEL_CHOICES = [
         ("G1", "Grade 1"),
@@ -34,7 +35,7 @@ class ClassRoom(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["level", "stream", "year"],
-                name="unique_classroom_level_stream_year"
+                name="unique_classroom_level_stream_year",
             )
         ]
 
@@ -45,3 +46,35 @@ class ClassRoom(models.Model):
         if self.year:
             parts.append(str(self.year))
         return " - ".join(parts)
+
+
+class AcademicYear(models.Model):
+    name = models.CharField(max_length=9, unique=True)  # e.g. "2025/2026"
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Term(models.Model):
+    year = models.ForeignKey(
+        "academics.AcademicYear",
+        on_delete=models.PROTECT,
+        related_name="terms",
+    )
+    name = models.CharField(max_length=20)  # e.g. "Term 1"
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["year", "name"],
+                name="unique_term_per_year",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.year} - {self.name}"
