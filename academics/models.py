@@ -23,9 +23,19 @@ class ClassRoom(models.Model):
     stream = models.CharField(max_length=10, blank=True)  # e.g. A, B, C
     year = models.PositiveIntegerField(null=True, blank=True)  # optional
 
+    # Link: A class can have many subjects, and a subject can belong to many classes
+    subjects = models.ManyToManyField(
+        "subjects.Subject",
+        blank=True,
+        related_name="classrooms",
+    )
+
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["level", "stream", "year"], name="unique_classroom_level_stream_year")
+            models.UniqueConstraint(
+                fields=["level", "stream", "year"],
+                name="unique_classroom_level_stream_year"
+            )
         ]
 
     def __str__(self):
